@@ -1,0 +1,86 @@
+name: mtg-tomer
+runtime: yaml
+description: Required resources for mtg
+outputs:
+  name: ${deployment.metadata.name}
+resources:
+  deployment:
+    type: kubernetes:apps/v1:Deployment
+    properties:
+      spec:
+        replicas: 4
+        selector:
+          matchLabels: ${appLabels}
+        template:
+          metadata:
+            labels: ${appLabels}
+          spec:
+            containers:
+              - image: registry.k8s.io/mitiga-nginx:1.0
+                name: nginx
+                resources:
+                  requests:
+                    cpu: "0.5"  
+                    memory: "500Mi"  
+                  limits:
+                    cpu: "1"  
+                    memory: "1Gi"
+                volumeMounts:  
+                  - name: mtg-pvc-mount  
+                    mountPath: /opt/mtg
+            volumes:
+              - name: mtg-pvc-mount  
+                persistentVolumeClaim:
+                  claimName: mtg-pvc 
+
+  mtg-service:  
+    type: kubernetes:core/v1:Service
+    properties:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mtg-service
+      spec:
+        selector:
+          app: mtg-nginx 
+        ports:
+          - port: 80 
+            targetPort: 80  
+        type: NodePort 
+
+  mtg-pv:
+    type: kubernetes:core/v1:PersistentVolume
+    properties:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: mtg-pv
+      spec:
+        capacity:
+          storage: 1Gi
+        volumeMode: Filesystem
+        accessModes:
+          - ReadWriteOnce
+        persistentVolumeReclaimPolicy: Delete
+        hostPath:
+          path: /mnt/data
+
+
+  mtg-pvc: 
+    type: kubernetes:core/v1:PersistentVolumeClaim
+    properties:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: mtg-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+variables:
+  appLabels:
+    app: mtg-nginx
+
+
