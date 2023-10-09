@@ -16,7 +16,7 @@ resources:
             labels: ${appLabels}
           spec:
             containers:
-              - image: registry.k8s.io/mitiga-nginx:1.0
+              - image: registry.k8s.io/mtg-nginx:1.0
                 name: nginx
                 resources:
                   requests:
