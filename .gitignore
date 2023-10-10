@@ -1,0 +1,4 @@
+#Ignoring sensitive data that is built on the fly via Helper.sh
+secret.yaml
+selfsigned.crt
+selfsigned.key
