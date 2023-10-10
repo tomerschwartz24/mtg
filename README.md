@@ -27,8 +27,11 @@ pulumi up -C pulumi-mtg
 ```
 sh Helper.sh
 ```
-
-6. start minikube tunnel
+6. add entry to /etc/hosts
+```
+127.0.0.1	tomer-mtg
+```
+7 . start minikube tunnel
 ```
 sudo minikube tunnel
 ```
