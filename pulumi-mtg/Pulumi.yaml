@@ -18,6 +18,8 @@ resources:
             containers:
               - image: registry.k8s.io/mtg-nginx:1.0
                 name: nginx
+                ports:
+                - containerPort: 80
                 resources:
                   requests:
                     cpu: "0.5"  
@@ -28,6 +30,7 @@ resources:
                 volumeMounts:  
                   - name: mtg-pvc-mount  
                     mountPath: /opt/mtg
+
             volumes:
               - name: mtg-pvc-mount  
                 persistentVolumeClaim:
@@ -44,9 +47,11 @@ resources:
         selector:
           app: mtg-nginx 
         ports:
-          - port: 80 
-            targetPort: 80  
-        type: NodePort 
+          - protocol: TCP
+            port: 80
+            targetPort: 80
+        type: NodePort
+  
 
   mtg-pv:
     type: kubernetes:core/v1:PersistentVolume
